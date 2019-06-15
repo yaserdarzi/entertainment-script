@@ -6,7 +6,7 @@ namespace App\Inside;
 class Constants
 {
     //App
-    Const APP = "hotel";
+    Const APP = "entertainment";
 
     //Status
     const STATUS_PENDING = 'pending';
