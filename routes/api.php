@@ -50,15 +50,11 @@ Route::namespace('Api\V1')->prefix('/v1')->group(function () {
         Route::resource('/product/{product_id}/video', 'ProductVideoController');
 
 
-        //product Room Episode
-        Route::post('/product/{product_id}/room/episode/update/{room_episode_id}', 'RoomEpisodeController@update');
-        Route::resource('/product/{product_id}/room/episode', 'RoomEpisodeController');
+        //Product Episode
+        Route::post('/product/{product_id}/episode/update/{product_episode_id}', 'ProductEpisodeController@update');
+        Route::resource('/product/{product_id}/episode', 'ProductEpisodeController');
 
-        //product Room
-        Route::post('/product/{product_id}/room/update/{room_id}', 'RoomController@update');
-        Route::resource('/product/{product_id}/room', 'RoomController');
-
-        //product Rack
+        //Product Rack
         Route::get('/product/{product_id}/rack', 'RackController@index');
 
         //Setting
