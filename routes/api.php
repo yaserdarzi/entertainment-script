@@ -85,13 +85,13 @@ Route::namespace('Api\V1')->prefix('/v1')->group(function () {
 
     });
 
-//    //Agency
-//    Route::middleware('app.agency.check')->namespace('Agency')->prefix('/agency')->group(function () {
-//
-//        //Reservation
-//        Route::get('/reservation', 'ReservationController@index');
-//
-//
-//    });
+    //Agency
+    Route::middleware('app.agency.check')->namespace('Agency')->prefix('/agency')->group(function () {
+
+        //Reservation
+        Route::get('/reservation', 'ReservationController@index');
+
+
+    });
 
 });
