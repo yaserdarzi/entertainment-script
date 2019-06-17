@@ -75,7 +75,9 @@ class ReservationController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن ظرفیت اجباری می باشد.'
             );
-        $capacity = $this->help->normalizePhoneNumber($request->input('capacity'));
+        $capacity = intval($this->help->normalizePhoneNumber($request->input('capacity')));
+        $capacity_child = intval($this->help->normalizePhoneNumber($request->input('capacity_child')));
+        $capacity_baby = intval($this->help->normalizePhoneNumber($request->input('capacity_baby')));
         $startExplode = explode('/', $request->input('start_date'));
         $start_date = \Morilog\Jalali\CalendarUtils::toGregorian($startExplode[0], $startExplode[1], $startExplode[2]);
         $startDay = date_create(date('Y-m-d', strtotime($start_date[0] . '-' . $start_date[1] . '-' . $start_date[2])));
@@ -107,31 +109,17 @@ class ReservationController extends ApiController
                 foreach ($valProduct->episode as $key => $value) {
                     $value->is_buy = true;
                     $is_full = false;
-                    if ($value->capacity_remaining < $capacity) {
+                    if ($value->capacity_remaining < ($capacity + $capacity_child)) {
                         $value->is_buy = false;
                         $is_full = true;
                     }
-                    $price_adult_percent = $value->price_adult;
-                    if ($value->price_adult != 0)
-                        if ($value->type_percent == Constants::TYPE_PERCENT_PERCENT) {
-                            if ($value->percent != 0)
-                                $price_adult_percent = ($value->percent / 100) * $value->price_adult;
-                        } elseif ($value->type_percent == Constants::TYPE_PERCENT_PRICE)
-                            $price_adult_percent = $value->price_adult - $value->percent;
-                    $price_child_percent = $value->price_child;
-                    if ($value->price_child != 0)
-                        if ($value->type_percent == Constants::TYPE_PERCENT_PERCENT) {
-                            if ($value->percent != 0)
-                                $price_child_percent = ($value->percent / 100) * $value->price_child;
-                        } elseif ($value->type_percent == Constants::TYPE_PERCENT_PRICE)
-                            $price_child_percent = $value->price_child - $value->percent;
-                    $price_baby_percent = $value->price_baby;
-                    if ($value->price_baby != 0)
-                        if ($value->type_percent == Constants::TYPE_PERCENT_PERCENT) {
-                            if ($value->percent != 0)
-                                $price_baby_percent = ($value->percent / 100) * $value->price_baby;
-                        } elseif ($value->type_percent == Constants::TYPE_PERCENT_PRICE)
-                            $price_baby_percent = $value->price_baby - $value->percent;
+                    $price_all = intval($value->price_adult + $value->price_child + $value->price_baby);
+                    $price_percent = $price_all;
+                    if ($value->type_percent == Constants::TYPE_PERCENT_PERCENT) {
+                        if ($value->percent != 0)
+                            $price_percent = ($value->percent / 100) * $price_all;
+                    } elseif ($value->type_percent == Constants::TYPE_PERCENT_PRICE)
+                        $price_percent = $price_all - $value->percent;
                     $episode = [
                         'id' => $value->id,
                         'date' => CalendarUtils::strftime('Y-m-d', strtotime($value->date)),
@@ -142,9 +130,9 @@ class ReservationController extends ApiController
                         'price_adult' => $value->price_adult,
                         'price_child' => $value->price_child,
                         'price_baby' => $value->price_baby,
-                        'price_adult_percent' => $price_adult_percent,
-                        'price_child_percent' => $price_child_percent,
-                        'price_baby_percent' => $price_baby_percent,
+                        'price_all' => $price_all,
+                        'count_all' => intval($capacity + $capacity_child + $capacity_baby),
+                        'price_percent' => $price_percent,
                         'capacity_remaining' => $value->capacity_remaining,
                         'is_full' => $is_full,
                     ];
