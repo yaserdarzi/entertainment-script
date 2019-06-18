@@ -70,11 +70,6 @@ class ReservationController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن تاریخ شروع اجباری می باشد.'
             );
-        if (!$request->input('capacity'))
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                'کاربر گرامی ، وارد کردن ظرفیت اجباری می باشد.'
-            );
         $capacity = intval($this->help->normalizePhoneNumber($request->input('capacity')));
         $capacity_child = intval($this->help->normalizePhoneNumber($request->input('capacity_child')));
         $capacity_baby = intval($this->help->normalizePhoneNumber($request->input('capacity_baby')));
