@@ -113,7 +113,11 @@ class ReservationController extends ApiController
                         $value->is_buy = false;
                         $is_full = true;
                     }
-                    $price_all = intval($value->price_adult + $value->price_child + $value->price_baby);
+                    $price_all = intval(
+                        intval($value->price_adult * $capacity) +
+                        intval($value->price_child * $capacity_child) +
+                        intval($value->price_baby * $capacity_baby)
+                    );
                     $price_percent = $price_all;
                     if ($value->type_percent == Constants::TYPE_PERCENT_PERCENT) {
                         if ($value->percent != 0) {
@@ -146,7 +150,6 @@ class ReservationController extends ApiController
             else
                 unset($product[$keyProduct]);
         }
-
         return $this->respond($product);
     }
 
