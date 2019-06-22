@@ -57,33 +57,34 @@ Route::namespace('Api\V1')->prefix('/v1')->group(function () {
         Route::post('/product/{product_id}/episode/update/{product_episode_id}', 'ProductEpisodeController@update');
         Route::resource('/product/{product_id}/episode', 'ProductEpisodeController');
 
-
-//
 //        //Setting
 //        Route::get('/setting', 'SettingController@index');
 
-//        //Agency
-//        Route::namespace('WebService')->prefix('/webservice')->group(function () {
-//
-//            //Hotel Room
-//            Route::get('/hotel/{hotel_id}/room', 'RoomController@index');
-//
-//            //Hotel Gallery
-//            Route::get('/hotel/{hotel_id}/gallery', 'HotelGalleryController@index');
-//
-//            //Reservation
-//            Route::get('/reservation', 'ReservationController@index');
-//            Route::get('/reservation/{room_id}', 'ReservationController@show');
-//
-//            //Payment
-//            Route::Post('/payment', 'ShoppingController@store');
-//
-//            //Agency Request
-//            Route::Post('/agency/request', 'AgencyRequestController@store');
-//
-//            //Hotel Comment
-//            Route::get('/hotel/{hotel_id}/comment', 'HotelCommentController@index');
-//        });
+        //Supplier Webservice
+        Route::namespace('WebService')->prefix('/webservice')->group(function () {
+
+            //Product
+            Route::get('product/{product_id}', 'ProductController@show');
+
+            //Product Gallery
+            Route::get('/product/{hotel_id}/gallery', 'ProductGalleryController@index');
+
+            //Product Video
+            Route::get('/product/{product_id}/video', 'ProductVideoController@index');
+
+            //Reservation
+            Route::get('/reservation', 'ReservationController@index');
+            Route::get('/reservation/{product_id}', 'ReservationController@show');
+
+            //Payment
+            Route::Post('/payment', 'ShoppingController@store');
+
+            //Agency Request
+            Route::Post('/agency/request', 'AgencyRequestController@store');
+
+            //Product Comment
+            Route::get('/product/{hotel_id}/comment', 'ProductCommentController@index');
+        });
 
     });
 
