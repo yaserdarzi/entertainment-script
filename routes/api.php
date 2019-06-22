@@ -43,22 +43,24 @@ Route::namespace('Api\V1')->prefix('/v1')->group(function () {
         Route::post('/product/update/{product_id}', 'ProductController@update');
         Route::resource('/product', 'ProductController');
 
+        //Product Comment
+        Route::post('/product/{product_id}/comment/update/{product_comment_id}', 'ProductCommentController@update');
+        Route::resource('/product/{product_id}/comment', 'ProductCommentController');
+
         //Product Gallery
         Route::resource('/product/{product_id}/gallery', 'ProductGalleryController');
 
         //Product Video
         Route::resource('/product/{product_id}/video', 'ProductVideoController');
 
-
         //Product Episode
         Route::post('/product/{product_id}/episode/update/{product_episode_id}', 'ProductEpisodeController@update');
         Route::resource('/product/{product_id}/episode', 'ProductEpisodeController');
 
-        //Product Rack
-        Route::get('/product/{product_id}/rack', 'RackController@index');
 
-        //Setting
-        Route::get('/setting', 'SettingController@index');
+//
+//        //Setting
+//        Route::get('/setting', 'SettingController@index');
 
 //        //Agency
 //        Route::namespace('WebService')->prefix('/webservice')->group(function () {
