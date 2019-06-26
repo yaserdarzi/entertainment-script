@@ -6,11 +6,9 @@ use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
 use App\Inside\Helpers;
-use App\Product;
 use App\ProductEpisode;
 use Illuminate\Http\Request;
 use App\Http\Requests;
-use Illuminate\Support\Facades\DB;
 use Morilog\Jalali\CalendarUtils;
 
 class ReservationController extends ApiController
