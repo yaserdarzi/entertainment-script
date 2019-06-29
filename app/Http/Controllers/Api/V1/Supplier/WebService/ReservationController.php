@@ -6,9 +6,11 @@ use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
 use App\Inside\Helpers;
+use App\Product;
 use App\ProductEpisode;
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use Illuminate\Support\Facades\DB;
 use Morilog\Jalali\CalendarUtils;
 
 class ReservationController extends ApiController
@@ -88,7 +90,23 @@ class ReservationController extends ApiController
                     'is_full' => $is_full,
                 ];
             }
-        return $this->respond($episode);
+
+        $product = Product::join(Constants::PRODUCT_SUPPLIER_DB, Constants::PRODUCT_DB . '.id', '=', Constants::PRODUCT_SUPPLIER_DB . '.product_id')
+            ->with("gallery", "video")
+            ->select(
+                Constants::PRODUCT_DB . '.id',
+                'title',
+                'small_desc',
+                'desc',
+                'rule',
+                'recovery',
+                'sort',
+                'star',
+                DB::raw("CASE WHEN image != '' THEN (concat ( '" . url('') . "/files/product/', image) ) ELSE '' END as image"),
+                DB::raw("CASE WHEN image != '' THEN (concat ( '" . url('') . "/files/product/thumb/', image) ) ELSE '' END as image_thumb")
+            )
+            ->where(Constants::PRODUCT_SUPPLIER_DB . '.supplier_id', $request->input('supplier_id'))->first();
+        return $this->respond(["episode" => $episode, "product" => $product]);
     }
 
     /**
