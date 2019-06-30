@@ -12,7 +12,6 @@ use App\ProductSupplier;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Illuminate\Support\Facades\DB;
-use Intervention\Image\Facades\Image;
 
 class ProductVideoController extends ApiController
 {
