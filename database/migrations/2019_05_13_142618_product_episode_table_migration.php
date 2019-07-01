@@ -20,11 +20,15 @@ class ProductEpisodeTableMigration extends Migration
             $table->bigInteger('product_id');
             $table->bigInteger('supplier_id');
             $table->bigInteger('capacity')->default(1);
+            $table->bigInteger('capacity_power_up')->default(1);
             $table->bigInteger('capacity_filled')->default(0);
             $table->bigInteger('capacity_remaining')->default(1);
             $table->bigInteger('price_adult')->default(0);
+            $table->bigInteger('price_adult_power_up')->default(0);
             $table->bigInteger('price_child')->default(0);
+            $table->bigInteger('price_child_power_up')->default(0);
             $table->bigInteger('price_baby')->default(0);
+            $table->bigInteger('price_baby_power_up')->default(0);
             $table->string('type_percent')->default(Constants::TYPE_PERCENT_PERCENT);
             $table->bigInteger('percent')->default(0);
             $table->string('title')->nullable();

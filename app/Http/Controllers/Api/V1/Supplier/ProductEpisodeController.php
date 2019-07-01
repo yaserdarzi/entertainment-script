@@ -96,10 +96,20 @@ class ProductEpisodeController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن ظرفیت اجباری می باشد.'
             );
+        if (!$request->input('capacity_power_up'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن ظرفیت پاورآپ اجباری می باشد.'
+            );
         if (!$request->input('price_adult'))
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن قیمت بزرگسالان اجباری می باشد.'
+            );
+        if (!$request->input('price_adult_power_up'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن قیمت بزرگسالان پاورآپ اجباری می باشد.'
             );
         switch ($request->input('type_percent')) {
             case Constants::TYPE_PERCENT_PRICE:
@@ -135,10 +145,14 @@ class ProductEpisodeController extends ApiController
                 'product_id' => $product_id,
                 'supplier_id' => $request->input('supplier_id'),
                 'capacity' => $this->help->normalizePhoneNumber($request->input('capacity')),
+                'capacity_power_up' => $this->help->normalizePhoneNumber($request->input('capacity_power_up')),
                 'capacity_remaining' => $this->help->normalizePhoneNumber($request->input('capacity')),
                 'price_adult' => intval($this->help->priceNumberDigitsToNormal($request->input('price_adult'))),
+                'price_adult_power_up' => intval($this->help->priceNumberDigitsToNormal($request->input('price_adult_power_up'))),
                 'price_child' => intval($this->help->priceNumberDigitsToNormal($request->input('price_child'))),
+                'price_child_power_up' => intval($this->help->priceNumberDigitsToNormal($request->input('price_child_power_up'))),
                 'price_baby' => intval($this->help->priceNumberDigitsToNormal($request->input('price_baby'))),
+                'price_baby_power_up' => intval($this->help->priceNumberDigitsToNormal($request->input('price_baby_power_up'))),
                 'type_percent' => $typePercent,
                 'percent' => $this->help->normalizePhoneNumber($request->input('percent')),
                 'title' => $request->input('title'),
