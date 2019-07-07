@@ -25,6 +25,7 @@ class Constants
     const PRODUCT_GALLERY_DB = 'product_gallery';
     const PRODUCT_VIDEO_DB = 'product_video';
     const PRODUCT_EPISODE_DB = 'product_episode';
+    const PRODUCT_COMMENT_DB = 'product_comment';
 
 
     //Type Percent

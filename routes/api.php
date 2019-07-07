@@ -43,59 +43,58 @@ Route::namespace('Api\V1')->prefix('/v1')->group(function () {
         Route::post('/product/update/{product_id}', 'ProductController@update');
         Route::resource('/product', 'ProductController');
 
+        //Product Comment
+        Route::post('/product/{product_id}/comment/update/{product_comment_id}', 'ProductCommentController@update');
+        Route::resource('/product/{product_id}/comment', 'ProductCommentController');
+
         //Product Gallery
         Route::resource('/product/{product_id}/gallery', 'ProductGalleryController');
 
         //Product Video
         Route::resource('/product/{product_id}/video', 'ProductVideoController');
 
+        //Product Episode
+        Route::post('/product/{product_id}/episode/update/{product_episode_id}', 'ProductEpisodeController@update');
+        Route::resource('/product/{product_id}/episode', 'ProductEpisodeController');
 
-        //product Room Episode
-        Route::post('/product/{product_id}/room/episode/update/{room_episode_id}', 'RoomEpisodeController@update');
-        Route::resource('/product/{product_id}/room/episode', 'RoomEpisodeController');
+//        //Setting
+//        Route::get('/setting', 'SettingController@index');
 
-        //product Room
-        Route::post('/product/{product_id}/room/update/{room_id}', 'RoomController@update');
-        Route::resource('/product/{product_id}/room', 'RoomController');
+        //Supplier Webservice
+        Route::namespace('WebService')->prefix('/webservice')->group(function () {
 
-        //product Rack
-        Route::get('/product/{product_id}/rack', 'RackController@index');
+            //Product
+            Route::get('product/{product_id}', 'ProductController@show');
 
-        //Setting
-        Route::get('/setting', 'SettingController@index');
+            //Product Gallery
+            Route::get('/product/{hotel_id}/gallery', 'ProductGalleryController@index');
 
-//        //Agency
-//        Route::namespace('WebService')->prefix('/webservice')->group(function () {
-//
-//            //Hotel Room
-//            Route::get('/hotel/{hotel_id}/room', 'RoomController@index');
-//
-//            //Hotel Gallery
-//            Route::get('/hotel/{hotel_id}/gallery', 'HotelGalleryController@index');
-//
-//            //Reservation
-//            Route::get('/reservation', 'ReservationController@index');
-//            Route::get('/reservation/{room_id}', 'ReservationController@show');
-//
-//            //Payment
-//            Route::Post('/payment', 'ShoppingController@store');
-//
-//            //Agency Request
-//            Route::Post('/agency/request', 'AgencyRequestController@store');
-//
-//            //Hotel Comment
-//            Route::get('/hotel/{hotel_id}/comment', 'HotelCommentController@index');
-//        });
+            //Product Video
+            Route::get('/product/{product_id}/video', 'ProductVideoController@index');
+
+            //Reservation
+            Route::get('/reservation', 'ReservationController@index');
+            Route::get('/reservation/{product_id}', 'ReservationController@show');
+
+            //Payment
+            Route::Post('/payment', 'ShoppingController@store');
+
+            //Agency Request
+            Route::Post('/agency/request', 'AgencyRequestController@store');
+
+            //Product Comment
+            Route::get('/product/{hotel_id}/comment', 'ProductCommentController@index');
+        });
 
     });
 
-//    //Agency
-//    Route::middleware('app.agency.check')->namespace('Agency')->prefix('/agency')->group(function () {
-//
-//        //Reservation
-//        Route::get('/reservation', 'ReservationController@index');
-//
-//
-//    });
+    //Agency
+    Route::middleware('app.agency.check')->namespace('Agency')->prefix('/agency')->group(function () {
+
+        //Reservation
+        Route::get('/reservation', 'ReservationController@index');
+
+
+    });
 
 });
