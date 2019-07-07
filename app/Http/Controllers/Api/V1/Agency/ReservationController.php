@@ -124,7 +124,7 @@ class ReservationController extends ApiController
                                 intval($value->price_child_power_up * $capacity_child) +
                                 intval($value->price_baby_power_up * $capacity_baby)
                             );
-                            $price_percent = $price_all;
+                            $price_percent = $price_all_computing;
                             if ($value->type_percent == Constants::TYPE_PERCENT_PERCENT) {
                                 if ($value->percent != 0) {
                                     $price_percent = ($value->percent / 100) * $price_all_computing;
