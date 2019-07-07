@@ -48,7 +48,8 @@ class ReservationController extends ApiController
                 "Accept: application/json",
                 "sales: agency",
                 "Authorization: " . $request->header('Authorization'),
-                "appToken: " . $request->header('appToken')
+                "appToken: " . $request->header('appToken'),
+                "appName: " . Constants::APP,
             ),
         ));
         $response = curl_exec($curl);
@@ -70,6 +71,8 @@ class ReservationController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن تاریخ شروع اجباری می باشد.'
             );
+
+        $commissions = (array)json_decode($response)->data->commissions;
         $capacity = intval($this->help->normalizePhoneNumber($request->input('capacity')));
         $capacity_child = intval($this->help->normalizePhoneNumber($request->input('capacity_child')));
         $capacity_baby = intval($this->help->normalizePhoneNumber($request->input('capacity_baby')));
@@ -93,56 +96,90 @@ class ReservationController extends ApiController
                 DB::raw("CASE WHEN image != '' THEN (concat ( '" . url('') . "/files/product/thumb/', image) ) ELSE '' END as image_thumb")
             )->get();
         foreach ($product as $keyProduct => $valProduct) {
-            $valProduct->episode = ProductEpisode::where('app_id', $request->input('app_id'))
-                ->whereIn('supplier_id', $supplierID)
-                ->where([
-                    'status' => Constants::STATUS_ACTIVE,
-                    'date' => $date,
-                    'product_id' => $valProduct->id
-                ])->get();
-            if (sizeof($valProduct->episode))
-                foreach ($valProduct->episode as $key => $value) {
-                    $value->is_buy = true;
-                    $is_full = false;
-                    if ($value->capacity_remaining < ($capacity + $capacity_child)) {
-                        $value->is_buy = false;
-                        $is_full = true;
-                    }
-                    $price_all = intval(
-                        intval($value->price_adult * $capacity) +
-                        intval($value->price_child * $capacity_child) +
-                        intval($value->price_baby * $capacity_baby)
-                    );
-                    $price_percent = $price_all;
-                    if ($value->type_percent == Constants::TYPE_PERCENT_PERCENT) {
-                        if ($value->percent != 0) {
-                            $price_percent = ($value->percent / 100) * $price_all;
-                            $price_percent = $price_all - $price_percent;
+            if (in_array(Constants::APP . '-' . $valProduct->id, array_column($commissions, 'shopping_id'))) {
+                $commission = $commissions[array_search(Constants::APP . '-' . $valProduct->id, array_column($commissions, 'shopping_id'))];
+                $valProduct->episode = ProductEpisode::where('app_id', $request->input('app_id'))
+                    ->whereIn('supplier_id', $supplierID)
+                    ->where([
+                        'status' => Constants::STATUS_ACTIVE,
+                        'date' => $date,
+                        'product_id' => $valProduct->id
+                    ])->get();
+                if (sizeof($valProduct->episode))
+                    foreach ($valProduct->episode as $key => $value) {
+                        $value->is_buy = true;
+                        $is_full = false;
+                        if ($value->capacity_remaining < ($capacity + $capacity_child)) {
+                            $value->is_buy = false;
+                            $is_full = true;
                         }
-                    } elseif ($value->type_percent == Constants::TYPE_PERCENT_PRICE)
-                        $price_percent = $price_all - $value->percent;
-                    $episode = [
-                        'id' => $value->id,
-                        'date' => CalendarUtils::strftime('Y-m-d', strtotime($value->date)),
-                        'day' => CalendarUtils::strftime('%A', strtotime($value->date)),
-                        'start_hours' => $value->start_hours,
-                        'end_hours' => $value->end_hours,
-                        'title' => $value->title,
-                        'price_adult' => $value->price_adult,
-                        'count_adult' => $capacity,
-                        'price_child' => $value->price_child,
-                        'count_child' => $capacity_child,
-                        'price_baby' => $value->price_baby,
-                        'count_baby' => $capacity_baby,
-                        'price_all' => $price_all,
-                        'count_all' => intval($capacity + $capacity_child + $capacity_baby),
-                        'price_percent' => $price_percent,
-                        'capacity_remaining' => $value->capacity_remaining,
-                        'is_full' => $is_full,
-                    ];
-                    $valProduct->episode[$key] = $episode;
-                }
-            else
+                        if ($commission->is_price_power_up) {
+                            $price_all = intval(
+                                intval($value->price_adult * $capacity) +
+                                intval($value->price_child * $capacity_child) +
+                                intval($value->price_baby * $capacity_baby)
+                            );
+                            $price_all_computing = intval(
+                                intval($value->price_adult_power_up * $capacity) +
+                                intval($value->price_child_power_up * $capacity_child) +
+                                intval($value->price_baby_power_up * $capacity_baby)
+                            );
+                            $price_percent = $price_all;
+                            if ($value->type_percent == Constants::TYPE_PERCENT_PERCENT) {
+                                if ($value->percent != 0) {
+                                    $price_percent = ($value->percent / 100) * $price_all_computing;
+                                    $price_percent = $price_all_computing - $price_percent;
+                                }
+                            } elseif ($value->type_percent == Constants::TYPE_PERCENT_PRICE)
+                                $price_percent = $price_all_computing - $value->percent;
+                        } else {
+                            $price_all = intval(
+                                intval($value->price_adult * $capacity) +
+                                intval($value->price_child * $capacity_child) +
+                                intval($value->price_baby * $capacity_baby)
+                            );
+                            $price_all_computing = intval(
+                                intval($value->price_adult * $capacity) +
+                                intval($value->price_child * $capacity_child) +
+                                intval($value->price_baby * $capacity_baby)
+                            );
+                            $price_percent = $price_all;
+                            if ($value->type_percent == Constants::TYPE_PERCENT_PERCENT) {
+                                if ($value->percent != 0) {
+                                    $price_percent = $price_all - (($value->percent / 100) * $price_all);
+                                }
+                            } elseif ($value->type_percent == Constants::TYPE_PERCENT_PRICE)
+                                $price_percent = $price_all - $value->percent;
+                        }
+                        if ($commission->type == Constants::TYPE_PERCENT_PERCENT) {
+                            if ($commission->percent < 100)
+                                $price_percent = intval($price_percent - (($commission->percent / 100) * $price_all_computing));
+                        } elseif ($commission->type == Constants::TYPE_PERCENT_PRICE)
+                            $price_percent = $price_percent - $commission->price;
+                        $episode = [
+                            'id' => $value->id,
+                            'date' => CalendarUtils::strftime('Y-m-d', strtotime($value->date)),
+                            'day' => CalendarUtils::strftime('%A', strtotime($value->date)),
+                            'start_hours' => $value->start_hours,
+                            'end_hours' => $value->end_hours,
+                            'title' => $value->title,
+                            'price_adult' => $value->price_adult,
+                            'count_adult' => $capacity,
+                            'price_child' => $value->price_child,
+                            'count_child' => $capacity_child,
+                            'price_baby' => $value->price_baby,
+                            'count_baby' => $capacity_baby,
+                            'price_all' => $price_all,
+                            'count_all' => intval($capacity + $capacity_child + $capacity_baby),
+                            'price_percent' => $price_percent,
+                            'capacity_remaining' => $value->capacity_remaining,
+                            'is_full' => $is_full,
+                        ];
+                        $valProduct->episode[$key] = $episode;
+                    }
+                else
+                    unset($product[$keyProduct]);
+            } else
                 unset($product[$keyProduct]);
         }
         return $this->respond($product);
