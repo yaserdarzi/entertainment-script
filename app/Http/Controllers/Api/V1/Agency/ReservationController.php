@@ -71,7 +71,6 @@ class ReservationController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن تاریخ شروع اجباری می باشد.'
             );
-
         $commissions = (array)json_decode($response)->data->commissions;
         $capacity = intval($this->help->normalizePhoneNumber($request->input('capacity')));
         $capacity_child = intval($this->help->normalizePhoneNumber($request->input('capacity_child')));
