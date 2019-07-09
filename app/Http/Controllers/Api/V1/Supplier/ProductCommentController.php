@@ -118,7 +118,7 @@ class ProductCommentController extends ApiController
             $data = getimagesize($request->file("path"));
             $imageWidth = $data[0];
             $imageHeight = $data[1];
-            $newDimen = $this->help->getScaledDimension($imageWidth, $imageHeight, 200, 200, false);
+            $newDimen = $this->help->getScaledDimension($imageWidth, $imageHeight, 400, 400, false);
             $image_resize->resize($newDimen[0], $newDimen[1]);
             $thumb = public_path('/files/product/' . $product_id . '/comment/thumb/' . $path);
             $image_resize->save($thumb);
@@ -236,7 +236,7 @@ class ProductCommentController extends ApiController
                 $data = getimagesize($request->file("path"));
                 $imageWidth = $data[0];
                 $imageHeight = $data[1];
-                $newDimen = $this->help->getScaledDimension($imageWidth, $imageHeight, 200, 200, false);
+                $newDimen = $this->help->getScaledDimension($imageWidth, $imageHeight, 400, 400, false);
                 $image_resize->resize($newDimen[0], $newDimen[1]);
                 $thumb = public_path('/files/product/' . $product_id . '/comment/thumb/' . $path);
                 $image_resize->save($thumb);
