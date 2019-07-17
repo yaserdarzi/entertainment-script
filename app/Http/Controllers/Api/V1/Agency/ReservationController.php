@@ -86,12 +86,14 @@ class ReservationController extends ApiController
         );
         $date = $startDay->format('Y-m-d');
         $product = Product::where('app_id', $request->input('app_id'))
+            ->whereJsonContains("info", ["type" => $request->input("type")])
             ->select(
                 'id',
                 'app_id',
                 'title',
                 'small_desc',
                 'star',
+                'info',
                 DB::raw("CASE WHEN image != '' THEN (concat ( '" . url('') . "/files/product/thumb/', image) ) ELSE '' END as image_thumb")
             )->get();
         foreach ($product as $keyProduct => $valProduct) {
