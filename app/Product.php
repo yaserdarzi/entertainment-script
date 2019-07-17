@@ -11,6 +11,9 @@ class Product extends Model
 {
     use SoftDeletes;
     protected $table = Constants::PRODUCT_DB;
+    protected $casts = [
+        'info' => 'object',
+    ];
     protected $fillable = [
         'app_id', 'title', 'image', 'small_desc', 'desc',
         'rule', 'recovery', 'sort', 'star', 'info'
