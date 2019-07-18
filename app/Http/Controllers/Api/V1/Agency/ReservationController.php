@@ -94,6 +94,7 @@ class ReservationController extends ApiController
                 'small_desc',
                 'star',
                 'info',
+                DB::raw("CASE WHEN image != '' THEN (concat ( '" . url('') . "/files/product/', image) ) ELSE '' END as image"),
                 DB::raw("CASE WHEN image != '' THEN (concat ( '" . url('') . "/files/product/thumb/', image) ) ELSE '' END as image_thumb")
             )->get();
         foreach ($product as $keyProduct => $valProduct) {
