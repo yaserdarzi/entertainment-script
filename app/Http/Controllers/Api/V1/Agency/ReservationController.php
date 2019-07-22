@@ -184,7 +184,7 @@ class ReservationController extends ApiController
             } else
                 unset($product[$keyProduct]);
         }
-        return $this->respond($product);
+        return $this->respond($product->values()->all());
     }
 
     /**
