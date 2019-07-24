@@ -115,49 +115,22 @@ class ReservationController extends ApiController
                             $value->is_buy = false;
                             $is_full = true;
                         }
-                        if ($commission->is_price_power_up) {
-                            $price_all = intval(
-                                intval($value->price_adult * $capacity) +
-                                intval($value->price_child * $capacity_child) +
-                                intval($value->price_baby * $capacity_baby)
-                            );
-                            $price_all_computing = intval(
-                                intval($value->price_adult_power_up * $capacity) +
-                                intval($value->price_child_power_up * $capacity_child) +
-                                intval($value->price_baby_power_up * $capacity_baby)
-                            );
-                            $price_percent = $price_all_computing;
-                            if ($value->type_percent == Constants::TYPE_PERCENT_PERCENT) {
-                                if ($value->percent != 0) {
-                                    $price_percent = ($value->percent / 100) * $price_all_computing;
-                                    $price_percent = $price_all_computing - $price_percent;
-                                }
-                            } elseif ($value->type_percent == Constants::TYPE_PERCENT_PRICE)
-                                $price_percent = $price_all_computing - $value->percent;
-                        } else {
-                            $price_all = intval(
-                                intval($value->price_adult * $capacity) +
-                                intval($value->price_child * $capacity_child) +
-                                intval($value->price_baby * $capacity_baby)
-                            );
-                            $price_all_computing = intval(
-                                intval($value->price_adult * $capacity) +
-                                intval($value->price_child * $capacity_child) +
-                                intval($value->price_baby * $capacity_baby)
-                            );
-                            $price_percent = $price_all;
-                            if ($value->type_percent == Constants::TYPE_PERCENT_PERCENT) {
-                                if ($value->percent != 0) {
-                                    $price_percent = $price_all - (($value->percent / 100) * $price_all);
-                                }
-                            } elseif ($value->type_percent == Constants::TYPE_PERCENT_PRICE)
-                                $price_percent = $price_all - $value->percent;
-                        }
+                        $price_all = intval(
+                            intval($value->price_adult * $capacity) +
+                            intval($value->price_child * $capacity_child) +
+                            intval($value->price_baby * $capacity_baby)
+                        );
+                        $price_all_computing = intval(
+                            intval($value->price_adult_power_up * $capacity) +
+                            intval($value->price_child_power_up * $capacity_child) +
+                            intval($value->price_baby_power_up * $capacity_baby)
+                        );
+                        $price_percent = $price_all_computing;
                         if ($commission->type == Constants::TYPE_PERCENT_PERCENT) {
                             if ($commission->percent < 100)
-                                $price_percent = intval($price_percent - (($commission->percent / 100) * $price_all_computing));
+                                $price_percent = intval($price_percent + (($commission->percent / 100) * $price_all_computing));
                         } elseif ($commission->type == Constants::TYPE_PERCENT_PRICE)
-                            $price_percent = $price_percent - $commission->price;
+                            $price_percent = $price_percent + $commission->price;
                         $episode = [
                             'id' => $value->id,
                             'date' => CalendarUtils::strftime('Y-m-d', strtotime($value->date)),
